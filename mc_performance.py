@@ -252,7 +252,7 @@ if submit:
             "Pressure (KPA)": [pressure],
             "Temperature (°C)": [temperature],
             "Air Flow Rate (CFM)": [airflow],
-            "Stack Condition": [stack]
+            "Stack Condition": [chimney]
 
         })
 
