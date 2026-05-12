@@ -101,7 +101,7 @@ else:
         "Pressure (KPA)",
         "Temperature (°C)",
         "Air Flow Rate (CFM)",
-        "Chimney Condition"
+        "Stack Condition"
     ])
 
     df.to_excel(DATA_FILE, index=False)
@@ -224,7 +224,7 @@ with st.form("form"):
     # CHIMNEY CONDITION
     # =================================================
 
-    chimney = st.text_input("Chimney Condition")
+    chimney = st.text_input("Stack Condition")
 
     submit = st.form_submit_button("⚡ SAVE DATA")
 
@@ -252,7 +252,7 @@ if submit:
             "Pressure (KPA)": [pressure],
             "Temperature (°C)": [temperature],
             "Air Flow Rate (CFM)": [airflow],
-            "Chimney Condition": [chimney]
+            "Stack Condition": [chimney]
 
         })
 
