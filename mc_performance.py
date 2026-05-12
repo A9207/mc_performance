@@ -20,48 +20,6 @@ st.set_page_config(
 )
 
 # =====================================================
-# LOGIN SYSTEM
-# =====================================================
-
-USERS = {
-    "admin": "1234",
-    "operator": "abcd"
-}
-
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-
-if "username" not in st.session_state:
-    st.session_state.username = ""
-
-def login():
-
-    st.title("🔐 LOGIN SYSTEM")
-
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-
-    if st.button("LOGIN"):
-
-        if username in USERS and USERS[username] == password:
-
-            st.session_state.logged_in = True
-            st.session_state.username = username
-
-            st.success("Login Successful")
-            st.rerun()
-
-        else:
-
-            st.error("Invalid Username or Password")
-
-# SHOW LOGIN PAGE
-if not st.session_state.logged_in:
-
-    login()
-    st.stop()
-
-# =====================================================
 # CSS THEME
 # =====================================================
 
@@ -115,15 +73,6 @@ h1,h2,h3 {
 
 st.sidebar.title("⚙️ MACHINE PANEL")
 
-st.sidebar.success(f"Logged in as: {st.session_state.username}")
-
-if st.sidebar.button("Logout"):
-
-    st.session_state.logged_in = False
-    st.session_state.username = ""
-
-    st.rerun()
-
 machine = st.sidebar.selectbox(
     "Select Machine",
     ["Machine 1", "Machine 2", "Machine 3", "Machine 4"]
@@ -145,12 +94,6 @@ if os.path.exists(DATA_FILE):
 
     df = pd.read_excel(DATA_FILE)
 
-    # Rename old column if exists
-    if "Chimney Condition" in df.columns:
-        df = df.rename(columns={
-            "Chimney Condition": "Stack Condition"
-        })
-
 else:
 
     df = pd.DataFrame(columns=[
@@ -158,7 +101,7 @@ else:
         "Pressure (KPA)",
         "Temperature (°C)",
         "Air Flow Rate (CFM)",
-        "Stack Condition"
+        "Chimney Condition"
     ])
 
     df.to_excel(DATA_FILE, index=False)
@@ -278,10 +221,10 @@ with st.form("form"):
         st.success(f"Calculated Air Flow Rate (CFM): {airflow:.2f}")
 
     # =================================================
-    # STACK CONDITION
+    # CHIMNEY CONDITION
     # =================================================
 
-    stack = st.text_input("Stack Condition")
+    chimney = st.text_input("Chimney Condition")
 
     submit = st.form_submit_button("⚡ SAVE DATA")
 
@@ -309,7 +252,7 @@ if submit:
             "Pressure (KPA)": [pressure],
             "Temperature (°C)": [temperature],
             "Air Flow Rate (CFM)": [airflow],
-            "Stack Condition": [stack]
+            "Chimney Condition": [chimney]
 
         })
 
@@ -405,11 +348,14 @@ if not machine_df.empty:
 
     graph_df = machine_df.copy()
 
+    # USE DAY NUMBER
     graph_df["Day"] = graph_df["Date"].dt.day
 
     st.subheader("📈 PERFORMANCE ANALYTICS")
 
+    # =================================================
     # PRESSURE GRAPH
+    # =================================================
 
     fig1 = go.Figure()
 
@@ -437,7 +383,9 @@ if not machine_df.empty:
 
     st.plotly_chart(fig1, use_container_width=True)
 
+    # =================================================
     # TEMPERATURE GRAPH
+    # =================================================
 
     fig2 = go.Figure()
 
@@ -465,7 +413,9 @@ if not machine_df.empty:
 
     st.plotly_chart(fig2, use_container_width=True)
 
+    # =================================================
     # AIR FLOW GRAPH
+    # =================================================
 
     fig3 = go.Figure()
 
