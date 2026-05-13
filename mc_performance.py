@@ -1,6 +1,7 @@
-# app.py
+# =====================================================
 # FUTURISTIC BAG FILTER PERFORMANCE MONITORING SYSTEM
 # Python 3.13 + Streamlit
+# =====================================================
 
 import streamlit as st
 import pandas as pd
@@ -90,21 +91,46 @@ DATA_FILE = f"data/{machine.replace(' ','_')}.xlsx"
 # LOAD DATA
 # =====================================================
 
+required_columns = [
+    "Date",
+    "Pressure (KPA)",
+    "Temperature (°C)",
+    "Air Flow Rate (CFM)",
+    "Compressed Air Pressure (MPa)",
+    "Chimney Condition",
+    "Discharge Hopper Condition",
+    "Operator Signature",
+    "Supervisor Signature"
+]
+
 if os.path.exists(DATA_FILE):
 
     df = pd.read_excel(DATA_FILE)
 
+    # Add missing columns if old Excel file exists
+    for col in required_columns:
+        if col not in df.columns:
+            df[col] = ""
+
 else:
 
-    df = pd.DataFrame(columns=[
-        "Date",
-        "Pressure (KPA)",
-        "Temperature (°C)",
-        "Air Flow Rate (CFM)",
-        "Chimney Condition"
-    ])
+    df = pd.DataFrame(columns=required_columns)
 
     df.to_excel(DATA_FILE, index=False)
+
+# =====================================================
+# DATA TYPE FIX
+# =====================================================
+
+numeric_columns = [
+    "Pressure (KPA)",
+    "Temperature (°C)",
+    "Air Flow Rate (CFM)",
+    "Compressed Air Pressure (MPa)"
+]
+
+for col in numeric_columns:
+    df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
 # =====================================================
 # TITLE
@@ -157,6 +183,13 @@ with st.form("form"):
             "Temperature (°C)",
             min_value=0.0,
             step=0.1,
+            format="%.2f"
+        )
+
+        compressed_air = st.number_input(
+            "Compressed Air Pressure (MPa)",
+            min_value=0.0,
+            step=0.01,
             format="%.2f"
         )
 
@@ -221,10 +254,24 @@ with st.form("form"):
         st.success(f"Calculated Air Flow Rate (CFM): {airflow:.2f}")
 
     # =================================================
-    # CHIMNEY CONDITION
+    # EXTRA INPUTS
     # =================================================
 
-    chimney = st.text_input("Chimney Condition")
+    chimney = st.text_input(
+        "Chimney Condition (OK / NOT OK)"
+    )
+
+    hopper = st.text_input(
+        "Discharge Hopper Condition (OK / NOT OK)"
+    )
+
+    operator_signature = st.text_input(
+        "Operator Signature"
+    )
+
+    supervisor_signature = st.text_input(
+        "Supervisor Signature"
+    )
 
     submit = st.form_submit_button("⚡ SAVE DATA")
 
@@ -252,7 +299,11 @@ if submit:
             "Pressure (KPA)": [pressure],
             "Temperature (°C)": [temperature],
             "Air Flow Rate (CFM)": [airflow],
-            "Chimney Condition": [chimney]
+            "Compressed Air Pressure (MPa)": [compressed_air],
+            "Chimney Condition": [chimney],
+            "Discharge Hopper Condition": [hopper],
+            "Operator Signature": [operator_signature],
+            "Supervisor Signature": [supervisor_signature]
 
         })
 
@@ -280,7 +331,7 @@ if not machine_df.empty:
 
     st.subheader("📊 MACHINE SUMMARY")
 
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3, c4 = st.columns(4)
 
     # PRESSURE CARD
 
@@ -312,6 +363,17 @@ if not machine_df.empty:
         <div class="metric-card">
         <h3>Air Flow</h3>
         <h1>{latest['Air Flow Rate (CFM)']:.2f} CFM</h1>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # COMPRESSED AIR CARD
+
+    with c4:
+
+        st.markdown(f"""
+        <div class="metric-card">
+        <h3>Compressed Air</h3>
+        <h1>{latest['Compressed Air Pressure (MPa)']:.2f} MPa</h1>
         </div>
         """, unsafe_allow_html=True)
 
@@ -442,6 +504,36 @@ if not machine_df.empty:
     )
 
     st.plotly_chart(fig3, use_container_width=True)
+
+    # =================================================
+    # COMPRESSED AIR GRAPH
+    # =================================================
+
+    fig4 = go.Figure()
+
+    fig4.add_trace(go.Scatter(
+        x=graph_df["Day"],
+        y=graph_df["Compressed Air Pressure (MPa)"],
+        mode="lines+markers",
+        line=dict(color="#FFD700", width=4),
+        marker=dict(size=8)
+    ))
+
+    fig4.update_layout(
+        title="Compressed Air Pressure Trend (MPa)",
+        paper_bgcolor="#0f172a",
+        plot_bgcolor="#0f172a",
+        font=dict(color="white"),
+        hovermode="x unified",
+        xaxis=dict(
+            title="Day",
+            dtick=1,
+            range=[1, 31]
+        ),
+        yaxis_title="MPa"
+    )
+
+    st.plotly_chart(fig4, use_container_width=True)
 
 # =====================================================
 # EXPORT
