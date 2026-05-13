@@ -29,7 +29,7 @@ st.markdown("""
 
 .stApp {
     background-color:#050816;
-    color:white;
+    color: white;
 }
 
 section[data-testid="stSidebar"] {
@@ -88,7 +88,7 @@ os.makedirs("data", exist_ok=True)
 DATA_FILE = f"data/{machine.replace(' ','_')}.xlsx"
 
 # =====================================================
-# LOAD DATA
+# REQUIRED COLUMNS
 # =====================================================
 
 required_columns = [
@@ -103,11 +103,15 @@ required_columns = [
     "Supervisor Signature"
 ]
 
+# =====================================================
+# LOAD DATA
+# =====================================================
+
 if os.path.exists(DATA_FILE):
 
     df = pd.read_excel(DATA_FILE)
 
-    # Add missing columns if old Excel file exists
+    # Add missing columns for old Excel files
     for col in required_columns:
         if col not in df.columns:
             df[col] = ""
@@ -130,7 +134,10 @@ numeric_columns = [
 ]
 
 for col in numeric_columns:
-    df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+    df[col] = pd.to_numeric(
+        df[col],
+        errors="coerce"
+    ).fillna(0)
 
 # =====================================================
 # TITLE
@@ -251,7 +258,9 @@ with st.form("form"):
 
         airflow = Q
 
-        st.success(f"Calculated Air Flow Rate (CFM): {airflow:.2f}")
+        st.success(
+            f"Calculated Air Flow Rate (CFM): {airflow:.2f}"
+        )
 
     # =================================================
     # EXTRA INPUTS
@@ -273,7 +282,9 @@ with st.form("form"):
         "Supervisor Signature"
     )
 
-    submit = st.form_submit_button("⚡ SAVE DATA")
+    submit = st.form_submit_button(
+        "⚡ SAVE DATA"
+    )
 
 # =====================================================
 # SAVE DATA
@@ -281,37 +292,36 @@ with st.form("form"):
 
 if submit:
 
-    if pressure == 0 and temperature == 0 and airflow == 0:
+    if not df.empty:
+        df["Date"] = pd.to_datetime(
+            df["Date"]
+        ).dt.date
 
-        st.warning("Please enter valid machine data.")
+    # Replace same date entry
+    df = df[~(df["Date"] == input_date)]
 
-    else:
+    new_data = pd.DataFrame({
 
-        if not df.empty:
-            df["Date"] = pd.to_datetime(df["Date"]).dt.date
+        "Date": [input_date],
+        "Pressure (KPA)": [pressure],
+        "Temperature (°C)": [temperature],
+        "Air Flow Rate (CFM)": [airflow],
+        "Compressed Air Pressure (MPa)": [compressed_air],
+        "Chimney Condition": [chimney],
+        "Discharge Hopper Condition": [hopper],
+        "Operator Signature": [operator_signature],
+        "Supervisor Signature": [supervisor_signature]
 
-        # Replace same date
-        df = df[~(df["Date"] == input_date)]
+    })
 
-        new_data = pd.DataFrame({
+    df = pd.concat(
+        [df, new_data],
+        ignore_index=True
+    )
 
-            "Date": [input_date],
-            "Pressure (KPA)": [pressure],
-            "Temperature (°C)": [temperature],
-            "Air Flow Rate (CFM)": [airflow],
-            "Compressed Air Pressure (MPa)": [compressed_air],
-            "Chimney Condition": [chimney],
-            "Discharge Hopper Condition": [hopper],
-            "Operator Signature": [operator_signature],
-            "Supervisor Signature": [supervisor_signature]
+    df.to_excel(DATA_FILE, index=False)
 
-        })
-
-        df = pd.concat([df, new_data], ignore_index=True)
-
-        df.to_excel(DATA_FILE, index=False)
-
-        st.success("✅ Data Saved Successfully")
+    st.success("✅ Data Saved Successfully")
 
 # =====================================================
 # DATAFRAME
@@ -325,15 +335,19 @@ machine_df = df.copy()
 
 if not machine_df.empty:
 
-    machine_df["Date"] = pd.to_datetime(machine_df["Date"])
+    machine_df["Date"] = pd.to_datetime(
+        machine_df["Date"]
+    )
 
-    latest = machine_df.sort_values("Date").iloc[-1]
+    latest = machine_df.sort_values(
+        "Date"
+    ).iloc[-1]
 
     st.subheader("📊 MACHINE SUMMARY")
 
     c1, c2, c3, c4 = st.columns(4)
 
-    # PRESSURE CARD
+    # PRESSURE
 
     with c1:
 
@@ -344,7 +358,7 @@ if not machine_df.empty:
         </div>
         """, unsafe_allow_html=True)
 
-    # TEMPERATURE CARD
+    # TEMPERATURE
 
     with c2:
 
@@ -355,7 +369,7 @@ if not machine_df.empty:
         </div>
         """, unsafe_allow_html=True)
 
-    # AIR FLOW CARD
+    # AIR FLOW
 
     with c3:
 
@@ -366,7 +380,7 @@ if not machine_df.empty:
         </div>
         """, unsafe_allow_html=True)
 
-    # COMPRESSED AIR CARD
+    # COMPRESSED AIR
 
     with c4:
 
@@ -385,7 +399,9 @@ st.subheader("🗂️ RECORDED DATA")
 
 if not machine_df.empty:
 
-    machine_df["Date"] = pd.to_datetime(machine_df["Date"])
+    machine_df["Date"] = pd.to_datetime(
+        machine_df["Date"]
+    )
 
     machine_df = machine_df.sort_values(
         "Date",
@@ -394,9 +410,14 @@ if not machine_df.empty:
 
     display_df = machine_df.copy()
 
-    display_df["Date"] = display_df["Date"].dt.strftime("%Y-%m-%d")
+    display_df["Date"] = display_df[
+        "Date"
+    ].dt.strftime("%Y-%m-%d")
 
-    st.dataframe(display_df, use_container_width=True)
+    st.dataframe(
+        display_df,
+        use_container_width=True
+    )
 
 else:
 
@@ -410,7 +431,6 @@ if not machine_df.empty:
 
     graph_df = machine_df.copy()
 
-    # USE DAY NUMBER
     graph_df["Day"] = graph_df["Date"].dt.day
 
     st.subheader("📈 PERFORMANCE ANALYTICS")
@@ -443,7 +463,10 @@ if not machine_df.empty:
         yaxis_title="KPA"
     )
 
-    st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(
+        fig1,
+        use_container_width=True
+    )
 
     # =================================================
     # TEMPERATURE GRAPH
@@ -473,7 +496,10 @@ if not machine_df.empty:
         yaxis_title="°C"
     )
 
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(
+        fig2,
+        use_container_width=True
+    )
 
     # =================================================
     # AIR FLOW GRAPH
@@ -503,7 +529,10 @@ if not machine_df.empty:
         yaxis_title="CFM"
     )
 
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(
+        fig3,
+        use_container_width=True
+    )
 
     # =================================================
     # COMPRESSED AIR GRAPH
@@ -533,7 +562,10 @@ if not machine_df.empty:
         yaxis_title="MPa"
     )
 
-    st.plotly_chart(fig4, use_container_width=True)
+    st.plotly_chart(
+        fig4,
+        use_container_width=True
+    )
 
 # =====================================================
 # EXPORT
