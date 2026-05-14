@@ -417,6 +417,7 @@ if not machine_df.empty:
     st.dataframe(
         display_df,
         use_container_width=True
+        hide_index=True
     )
 
 else:
