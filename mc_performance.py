@@ -318,6 +318,16 @@ if submit:
         [df, new_data],
         ignore_index=True
     )
+ # =================================================
+    # SORT BEFORE SAVE
+    # =================================================
+
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    df = df.sort_values(
+        by="Date",
+        ascending=True
+    ).reset_index(drop=True)
 
     df.to_excel(DATA_FILE, index=False)
 
