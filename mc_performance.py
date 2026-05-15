@@ -143,7 +143,7 @@ for col in numeric_columns:
 # TITLE
 # =====================================================
 
-st.title(" BAG FILTER PERFORMANCE MONITORING SYSTEM")
+st.title("⚡ BAG FILTER PERFORMANCE MONITORING SYSTEM")
 
 st.markdown(f"""
 <div class="metric-card">
@@ -283,7 +283,7 @@ with st.form("form"):
     )
 
     submit = st.form_submit_button(
-        " SAVE DATA"
+        "💾 SAVE DATA"
     )
 
 # =====================================================
@@ -297,8 +297,15 @@ if submit:
             df["Date"]
         ).dt.date
 
-    # Replace same date entry
+    # =================================================
+    # REMOVE SAME DATE ENTRY
+    # =================================================
+
     df = df[~(df["Date"] == input_date)]
+
+    # =================================================
+    # NEW DATA
+    # =================================================
 
     new_data = pd.DataFrame({
 
@@ -314,12 +321,17 @@ if submit:
 
     })
 
+    # =================================================
+    # ADD DATA
+    # =================================================
+
     df = pd.concat(
         [df, new_data],
         ignore_index=True
     )
- # =================================================
-    # SORT BEFORE SAVE
+
+    # =================================================
+    # SORT DATA BY DATE
     # =================================================
 
     df["Date"] = pd.to_datetime(df["Date"])
@@ -328,6 +340,10 @@ if submit:
         by="Date",
         ascending=True
     ).reset_index(drop=True)
+
+    # =================================================
+    # SAVE EXCEL
+    # =================================================
 
     df.to_excel(DATA_FILE, index=False)
 
@@ -440,7 +456,7 @@ else:
 
 if not machine_df.empty:
 
-    graph_df = machine_df.copy()
+    graph_df = machine_df.sort_values("Date").copy()
 
     graph_df["Day"] = graph_df["Date"].dt.day
 
