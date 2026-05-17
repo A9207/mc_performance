@@ -111,7 +111,6 @@ if os.path.exists(DATA_FILE):
 
     df = pd.read_excel(DATA_FILE)
 
-    # Add missing columns for old Excel files
     for col in required_columns:
         if col not in df.columns:
             df[col] = ""
@@ -121,6 +120,15 @@ else:
     df = pd.DataFrame(columns=required_columns)
 
     df.to_excel(DATA_FILE, index=False)
+
+# =====================================================
+# FIX DATE TYPE
+# =====================================================
+
+df["Date"] = pd.to_datetime(
+    df["Date"],
+    errors="coerce"
+)
 
 # =====================================================
 # DATA TYPE FIX
@@ -250,7 +258,10 @@ with st.form("form"):
 
         V = (v1 + v2 + v3 + v4 + v5) / 5
 
-        D = 0.81 / 3.142
+        # Real measured duct circumference
+        circumference = 0.81
+
+        D = circumference / 3.142
 
         A = (3.142 * D * D) / 4
 
@@ -292,21 +303,12 @@ with st.form("form"):
 
 if submit:
 
-    if not df.empty:
-        df["Date"] = pd.to_datetime(
-            df["Date"]
-        ).dt.date
+    df["Date"] = pd.to_datetime(df["Date"]).dt.date
 
-    # =================================================
-    # REMOVE SAME DATE ENTRY
-    # =================================================
-
+    # Remove same date entry
     df = df[~(df["Date"] == input_date)]
 
-    # =================================================
-    # NEW DATA
-    # =================================================
-
+    # New Data
     new_data = pd.DataFrame({
 
         "Date": [input_date],
@@ -321,19 +323,13 @@ if submit:
 
     })
 
-    # =================================================
-    # ADD DATA
-    # =================================================
-
+    # Add Data
     df = pd.concat(
         [df, new_data],
         ignore_index=True
     )
 
-    # =================================================
-    # SORT DATA BY DATE
-    # =================================================
-
+    # Sort
     df["Date"] = pd.to_datetime(df["Date"])
 
     df = df.sort_values(
@@ -341,31 +337,77 @@ if submit:
         ascending=True
     ).reset_index(drop=True)
 
-    # =================================================
-    # SAVE EXCEL
-    # =================================================
-
+    # Save
     df.to_excel(DATA_FILE, index=False)
 
     st.success("✅ Data Saved Successfully")
 
 # =====================================================
-# DATAFRAME
+# MACHINE DATAFRAME
 # =====================================================
 
 machine_df = df.copy()
 
 # =====================================================
-# KPI SUMMARY
+# MONTH FILTER
+# =====================================================
+
+st.sidebar.markdown("## 📅 FILTER")
+
+if not machine_df.empty:
+
+    available_years = sorted(
+        machine_df["Date"].dt.year.dropna().unique()
+    )
+
+else:
+
+    available_years = [date.today().year]
+
+selected_year = st.sidebar.selectbox(
+    "Select Year",
+    available_years
+)
+
+selected_month = st.sidebar.selectbox(
+    "Select Month",
+    range(1, 13),
+    format_func=lambda x:
+    date(1900, x, 1).strftime("%B")
+)
+
+# =====================================================
+# FILTER DATAFRAME
 # =====================================================
 
 if not machine_df.empty:
 
-    machine_df["Date"] = pd.to_datetime(
-        machine_df["Date"]
-    )
+    filtered_df = machine_df[
+        (machine_df["Date"].dt.year == selected_year) &
+        (machine_df["Date"].dt.month == selected_month)
+    ]
 
-    latest = machine_df.sort_values(
+else:
+
+    filtered_df = machine_df.copy()
+
+# =====================================================
+# FILTER INFO
+# =====================================================
+
+st.info(
+    f"Showing data for "
+    f"{date(1900, selected_month, 1).strftime('%B')} "
+    f"{selected_year}"
+)
+
+# =====================================================
+# KPI SUMMARY
+# =====================================================
+
+if not filtered_df.empty:
+
+    latest = filtered_df.sort_values(
         "Date"
     ).iloc[-1]
 
@@ -374,7 +416,6 @@ if not machine_df.empty:
     c1, c2, c3, c4 = st.columns(4)
 
     # PRESSURE
-
     with c1:
 
         st.markdown(f"""
@@ -385,7 +426,6 @@ if not machine_df.empty:
         """, unsafe_allow_html=True)
 
     # TEMPERATURE
-
     with c2:
 
         st.markdown(f"""
@@ -396,7 +436,6 @@ if not machine_df.empty:
         """, unsafe_allow_html=True)
 
     # AIR FLOW
-
     with c3:
 
         st.markdown(f"""
@@ -407,7 +446,6 @@ if not machine_df.empty:
         """, unsafe_allow_html=True)
 
     # COMPRESSED AIR
-
     with c4:
 
         st.markdown(f"""
@@ -423,18 +461,14 @@ if not machine_df.empty:
 
 st.subheader("🗂️ RECORDED DATA")
 
-if not machine_df.empty:
+if not filtered_df.empty:
 
-    machine_df["Date"] = pd.to_datetime(
-        machine_df["Date"]
-    )
-
-    machine_df = machine_df.sort_values(
+    filtered_df = filtered_df.sort_values(
         "Date",
         ascending=False
     )
 
-    display_df = machine_df.copy()
+    display_df = filtered_df.copy()
 
     display_df["Date"] = display_df[
         "Date"
@@ -454,9 +488,11 @@ else:
 # GRAPH SECTION
 # =====================================================
 
-if not machine_df.empty:
+if not filtered_df.empty:
 
-    graph_df = machine_df.sort_values("Date").copy()
+    graph_df = filtered_df.sort_values(
+        "Date"
+    ).copy()
 
     graph_df["Day"] = graph_df["Date"].dt.day
 
@@ -595,17 +631,28 @@ if not machine_df.empty:
     )
 
 # =====================================================
-# EXPORT
+# EXPORT FILTERED DATA
 # =====================================================
 
 st.subheader("📥 EXPORT")
 
-if os.path.exists(DATA_FILE):
+if not filtered_df.empty:
 
-    with open(DATA_FILE, "rb") as f:
+    export_file = (
+        f"{machine}_"
+        f"{selected_year}_"
+        f"{selected_month}.xlsx"
+    )
+
+    filtered_df.to_excel(
+        export_file,
+        index=False
+    )
+
+    with open(export_file, "rb") as f:
 
         st.download_button(
-            "⬇️ Download Excel",
+            "⬇️ Download Filtered Excel",
             f,
-            file_name=f"{machine}_data.xlsx"
+            file_name=export_file
         )
