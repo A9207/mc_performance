@@ -151,7 +151,7 @@ for col in numeric_columns:
 # TITLE
 # =====================================================
 
-st.title("⚡ BAG FILTER PERFORMANCE MONITORING SYSTEM")
+st.title(" BAG FILTER PERFORMANCE MONITORING SYSTEM")
 
 st.markdown(f"""
 <div class="metric-card">
