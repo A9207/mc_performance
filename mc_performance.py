@@ -93,7 +93,7 @@ DATA_FILE = f"data/{machine.replace(' ','_')}.xlsx"
 
 required_columns = [
     "Date",
-    "Pressure (KPA)",
+    "Different Pressure (KPA)",
     "Temperature (°C)",
     "Air Flow Rate (CFM)",
     "Compressed Air Pressure (MPa)",
@@ -135,7 +135,7 @@ df["Date"] = pd.to_datetime(
 # =====================================================
 
 numeric_columns = [
-    "Pressure (KPA)",
+    "Different Pressure (KPA)",
     "Temperature (°C)",
     "Air Flow Rate (CFM)",
     "Compressed Air Pressure (MPa)"
@@ -151,7 +151,7 @@ for col in numeric_columns:
 # TITLE
 # =====================================================
 
-st.title(" BAG FILTER PERFORMANCE MONITORING SYSTEM")
+st.title("⚡ BAG FILTER PERFORMANCE MONITORING SYSTEM")
 
 st.markdown(f"""
 <div class="metric-card">
@@ -182,7 +182,7 @@ with st.form("form"):
         )
 
         pressure = st.number_input(
-            "Pressure (KPA)",
+            "Different Pressure (KPA)",
             min_value=0.0,
             step=0.1,
             format="%.2f"
@@ -312,7 +312,7 @@ if submit:
     new_data = pd.DataFrame({
 
         "Date": [input_date],
-        "Pressure (KPA)": [pressure],
+        "Different Pressure (KPA)": [pressure],
         "Temperature (°C)": [temperature],
         "Air Flow Rate (CFM)": [airflow],
         "Compressed Air Pressure (MPa)": [compressed_air],
@@ -415,13 +415,13 @@ if not filtered_df.empty:
 
     c1, c2, c3, c4 = st.columns(4)
 
-    # PRESSURE
+    # DIFFERENT PRESSURE
     with c1:
 
         st.markdown(f"""
         <div class="metric-card">
-        <h3>Pressure</h3>
-        <h1>{latest['Pressure (KPA)']:.2f} KPA</h1>
+        <h3>Different Pressure</h3>
+        <h1>{latest['Different Pressure (KPA)']:.2f} KPA</h1>
         </div>
         """, unsafe_allow_html=True)
 
@@ -499,21 +499,21 @@ if not filtered_df.empty:
     st.subheader("📈 PERFORMANCE ANALYTICS")
 
     # =================================================
-    # PRESSURE GRAPH
+    # DIFFERENT PRESSURE GRAPH
     # =================================================
 
     fig1 = go.Figure()
 
     fig1.add_trace(go.Scatter(
         x=graph_df["Day"],
-        y=graph_df["Pressure (KPA)"],
+        y=graph_df["Different Pressure (KPA)"],
         mode="lines+markers",
         line=dict(color="#00F5FF", width=4),
         marker=dict(size=8)
     ))
 
     fig1.update_layout(
-        title="Pressure Trend (KPA)",
+        title="Different Pressure Trend (KPA)",
         paper_bgcolor="#0f172a",
         plot_bgcolor="#0f172a",
         font=dict(color="white"),
