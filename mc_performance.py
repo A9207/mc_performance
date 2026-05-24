@@ -97,6 +97,7 @@ required_columns = [
     "Temperature (°C)",
     "Air Flow Rate (CFM)",
     "Compressed Air Pressure (MPa)",
+    "Motor Ampere (A)",
     "Chimney Condition",
     "Discharge Hopper Condition",
     "Operator Signature",
@@ -138,7 +139,8 @@ numeric_columns = [
     "Pressure (KPA)",
     "Temperature (°C)",
     "Air Flow Rate (CFM)",
-    "Compressed Air Pressure (MPa)"
+    "Compressed Air Pressure (MPa)",
+    "Motor Ampere (A)"
 ]
 
 for col in numeric_columns:
@@ -151,7 +153,7 @@ for col in numeric_columns:
 # TITLE
 # =====================================================
 
-st.title(" BAG FILTER PERFORMANCE MONITORING SYSTEM")
+st.title("⚡ BAG FILTER PERFORMANCE MONITORING SYSTEM")
 
 st.markdown(f"""
 <div class="metric-card">
@@ -205,6 +207,13 @@ with st.form("form"):
             "Compressed Air Pressure (MPa)",
             min_value=0.0,
             step=0.01,
+            format="%.2f"
+        )
+
+        motor_ampere = st.number_input(
+            "Motor Ampere (A)",
+            min_value=0.0,
+            step=0.1,
             format="%.2f"
         )
 
@@ -316,6 +325,7 @@ if submit:
         "Temperature (°C)": [temperature],
         "Air Flow Rate (CFM)": [airflow],
         "Compressed Air Pressure (MPa)": [compressed_air],
+        "Motor Ampere (A)": [motor_ampere],
         "Chimney Condition": [chimney],
         "Discharge Hopper Condition": [hopper],
         "Operator Signature": [operator_signature],
@@ -413,7 +423,7 @@ if not filtered_df.empty:
 
     st.subheader("📊 MACHINE SUMMARY")
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
 
     # PRESSURE
     with c1:
@@ -452,6 +462,16 @@ if not filtered_df.empty:
         <div class="metric-card">
         <h3>Compressed Air</h3>
         <h1>{latest['Compressed Air Pressure (MPa)']:.2f} MPa</h1>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # MOTOR AMPERE
+    with c5:
+
+        st.markdown(f"""
+        <div class="metric-card">
+        <h3>Motor Ampere</h3>
+        <h1>{latest['Motor Ampere (A)']:.2f} A</h1>
         </div>
         """, unsafe_allow_html=True)
 
@@ -627,6 +647,39 @@ if not filtered_df.empty:
 
     st.plotly_chart(
         fig4,
+        use_container_width=True
+    )
+
+    # =================================================
+    # MOTOR AMPERE GRAPH
+    # =================================================
+
+    fig5 = go.Figure()
+
+    fig5.add_trace(go.Scatter(
+        x=graph_df["Day"],
+        y=graph_df["Motor Ampere (A)"],
+        mode="lines+markers",
+        line=dict(color="#FF4444", width=4),
+        marker=dict(size=8)
+    ))
+
+    fig5.update_layout(
+        title="Motor Ampere Trend (A)",
+        paper_bgcolor="#0f172a",
+        plot_bgcolor="#0f172a",
+        font=dict(color="white"),
+        hovermode="x unified",
+        xaxis=dict(
+            title="Day",
+            dtick=1,
+            range=[1, 31]
+        ),
+        yaxis_title="Ampere (A)"
+    )
+
+    st.plotly_chart(
+        fig5,
         use_container_width=True
     )
 
