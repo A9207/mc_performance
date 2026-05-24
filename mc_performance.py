@@ -97,9 +97,9 @@ required_columns = [
     "Temperature (°C)",
     "Air Flow Rate (CFM)",
     "Compressed Air Pressure (MPa)",
-    "Motor Ampere (A)",
     "Chimney Condition",
     "Discharge Hopper Condition",
+    "Motor Ampere (A)",
     "Operator Signature",
     "Supervisor Signature"
 ]
@@ -112,9 +112,13 @@ if os.path.exists(DATA_FILE):
 
     df = pd.read_excel(DATA_FILE)
 
+    # Add missing columns
     for col in required_columns:
         if col not in df.columns:
             df[col] = ""
+
+    # Force column order
+    df = df[required_columns]
 
 else:
 
@@ -144,6 +148,7 @@ numeric_columns = [
 ]
 
 for col in numeric_columns:
+
     df[col] = pd.to_numeric(
         df[col],
         errors="coerce"
@@ -325,9 +330,9 @@ if submit:
         "Temperature (°C)": [temperature],
         "Air Flow Rate (CFM)": [airflow],
         "Compressed Air Pressure (MPa)": [compressed_air],
-        "Motor Ampere (A)": [motor_ampere],
         "Chimney Condition": [chimney],
         "Discharge Hopper Condition": [hopper],
+        "Motor Ampere (A)": [motor_ampere],
         "Operator Signature": [operator_signature],
         "Supervisor Signature": [supervisor_signature]
 
@@ -346,6 +351,9 @@ if submit:
         by="Date",
         ascending=True
     ).reset_index(drop=True)
+
+    # Force column order
+    df = df[required_columns]
 
     # Save
     df.to_excel(DATA_FILE, index=False)
@@ -493,6 +501,9 @@ if not filtered_df.empty:
     display_df["Date"] = display_df[
         "Date"
     ].dt.strftime("%Y-%m-%d")
+
+    # FORCE COLUMN ORDER
+    display_df = display_df[required_columns]
 
     st.dataframe(
         display_df,
@@ -697,7 +708,10 @@ if not filtered_df.empty:
         f"{selected_month}.xlsx"
     )
 
-    filtered_df.to_excel(
+    # FORCE COLUMN ORDER
+    export_df = filtered_df[required_columns]
+
+    export_df.to_excel(
         export_file,
         index=False
     )
