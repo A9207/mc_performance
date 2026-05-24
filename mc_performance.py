@@ -168,10 +168,44 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # =====================================================
-# INPUT FORM
+# LOAD EXISTING DATA FOR SELECTED DATE
 # =====================================================
 
 st.subheader("📥 DAILY DATA ENTRY")
+
+existing_data = {}
+
+temp_date = st.date_input(
+    "Select Date To Edit/View",
+    value=date.today(),
+    key="top_date_selector"
+)
+
+existing_row = df[
+    df["Date"].dt.date == temp_date
+]
+
+if not existing_row.empty:
+
+    existing_data = existing_row.iloc[0].to_dict()
+
+else:
+
+    existing_data = {
+        "Pressure (KPA)": 0.0,
+        "Temperature (°C)": 0.0,
+        "Air Flow Rate (CFM)": 0.0,
+        "Compressed Air Pressure (MPa)": 0.0,
+        "Motor Ampere (A)": 0.0,
+        "Chimney Condition": "",
+        "Discharge Hopper Condition": "",
+        "Operator Signature": "",
+        "Supervisor Signature": ""
+    }
+
+# =====================================================
+# INPUT FORM
+# =====================================================
 
 with st.form("form"):
 
@@ -185,12 +219,13 @@ with st.form("form"):
 
         input_date = st.date_input(
             "Date",
-            value=date.today()
+            value=temp_date
         )
 
         pressure = st.number_input(
             "Pressure (KPA)",
             min_value=0.0,
+            value=float(existing_data["Pressure (KPA)"]),
             step=0.1,
             format="%.2f"
         )
@@ -204,6 +239,7 @@ with st.form("form"):
         temperature = st.number_input(
             "Temperature (°C)",
             min_value=0.0,
+            value=float(existing_data["Temperature (°C)"]),
             step=0.1,
             format="%.2f"
         )
@@ -211,6 +247,7 @@ with st.form("form"):
         compressed_air = st.number_input(
             "Compressed Air Pressure (MPa)",
             min_value=0.0,
+            value=float(existing_data["Compressed Air Pressure (MPa)"]),
             step=0.01,
             format="%.2f"
         )
@@ -218,6 +255,7 @@ with st.form("form"):
         motor_ampere = st.number_input(
             "Motor Ampere (A)",
             min_value=0.0,
+            value=float(existing_data["Motor Ampere (A)"]),
             step=0.1,
             format="%.2f"
         )
@@ -272,7 +310,6 @@ with st.form("form"):
 
         V = (v1 + v2 + v3 + v4 + v5) / 5
 
-        # Real measured duct circumference
         circumference = 0.81
 
         D = circumference / 3.142
@@ -292,19 +329,23 @@ with st.form("form"):
     # =================================================
 
     chimney = st.text_input(
-        "Chimney Condition (OK / NOT OK)"
+        "Chimney Condition (OK / NOT OK)",
+        value=str(existing_data["Chimney Condition"])
     )
 
     hopper = st.text_input(
-        "Discharge Hopper Condition (OK / NOT OK)"
+        "Discharge Hopper Condition (OK / NOT OK)",
+        value=str(existing_data["Discharge Hopper Condition"])
     )
 
     operator_signature = st.text_input(
-        "Operator Signature"
+        "Operator Signature",
+        value=str(existing_data["Operator Signature"])
     )
 
     supervisor_signature = st.text_input(
-        "Supervisor Signature"
+        "Supervisor Signature",
+        value=str(existing_data["Supervisor Signature"])
     )
 
     submit = st.form_submit_button(
@@ -433,9 +474,7 @@ if not filtered_df.empty:
 
     c1, c2, c3, c4, c5 = st.columns(5)
 
-    # PRESSURE
     with c1:
-
         st.markdown(f"""
         <div class="metric-card">
         <h3>Pressure</h3>
@@ -443,9 +482,7 @@ if not filtered_df.empty:
         </div>
         """, unsafe_allow_html=True)
 
-    # TEMPERATURE
     with c2:
-
         st.markdown(f"""
         <div class="metric-card">
         <h3>Temperature</h3>
@@ -453,9 +490,7 @@ if not filtered_df.empty:
         </div>
         """, unsafe_allow_html=True)
 
-    # AIR FLOW
     with c3:
-
         st.markdown(f"""
         <div class="metric-card">
         <h3>Air Flow</h3>
@@ -463,9 +498,7 @@ if not filtered_df.empty:
         </div>
         """, unsafe_allow_html=True)
 
-    # COMPRESSED AIR
     with c4:
-
         st.markdown(f"""
         <div class="metric-card">
         <h3>Compressed Air</h3>
@@ -473,9 +506,7 @@ if not filtered_df.empty:
         </div>
         """, unsafe_allow_html=True)
 
-    # MOTOR AMPERE
     with c5:
-
         st.markdown(f"""
         <div class="metric-card">
         <h3>Motor Ampere</h3>
@@ -502,7 +533,6 @@ if not filtered_df.empty:
         "Date"
     ].dt.strftime("%Y-%m-%d")
 
-    # FORCE COLUMN ORDER
     display_df = display_df[required_columns]
 
     st.dataframe(
@@ -529,170 +559,44 @@ if not filtered_df.empty:
 
     st.subheader("📈 PERFORMANCE ANALYTICS")
 
-    # =================================================
-    # PRESSURE GRAPH
-    # =================================================
+    graphs = [
+        ("Pressure (KPA)", "#00F5FF", "KPA"),
+        ("Temperature (°C)", "#FF00FF", "°C"),
+        ("Air Flow Rate (CFM)", "#00FF88", "CFM"),
+        ("Compressed Air Pressure (MPa)", "#FFD700", "MPa"),
+        ("Motor Ampere (A)", "#FF4444", "Ampere (A)")
+    ]
 
-    fig1 = go.Figure()
+    for column, color, ylabel in graphs:
 
-    fig1.add_trace(go.Scatter(
-        x=graph_df["Day"],
-        y=graph_df["Pressure (KPA)"],
-        mode="lines+markers",
-        line=dict(color="#00F5FF", width=4),
-        marker=dict(size=8)
-    ))
+        fig = go.Figure()
 
-    fig1.update_layout(
-        title="Pressure Trend (KPA)",
-        paper_bgcolor="#0f172a",
-        plot_bgcolor="#0f172a",
-        font=dict(color="white"),
-        hovermode="x unified",
-        xaxis=dict(
-            title="Day",
-            dtick=1,
-            range=[1, 31]
-        ),
-        yaxis_title="KPA"
-    )
+        fig.add_trace(go.Scatter(
+            x=graph_df["Day"],
+            y=graph_df[column],
+            mode="lines+markers",
+            line=dict(color=color, width=4),
+            marker=dict(size=8)
+        ))
 
-    st.plotly_chart(
-        fig1,
-        use_container_width=True
-    )
+        fig.update_layout(
+            title=f"{column} Trend",
+            paper_bgcolor="#0f172a",
+            plot_bgcolor="#0f172a",
+            font=dict(color="white"),
+            hovermode="x unified",
+            xaxis=dict(
+                title="Day",
+                dtick=1,
+                range=[1, 31]
+            ),
+            yaxis_title=ylabel
+        )
 
-    # =================================================
-    # TEMPERATURE GRAPH
-    # =================================================
-
-    fig2 = go.Figure()
-
-    fig2.add_trace(go.Scatter(
-        x=graph_df["Day"],
-        y=graph_df["Temperature (°C)"],
-        mode="lines+markers",
-        line=dict(color="#FF00FF", width=4),
-        marker=dict(size=8)
-    ))
-
-    fig2.update_layout(
-        title="Temperature Trend (°C)",
-        paper_bgcolor="#0f172a",
-        plot_bgcolor="#0f172a",
-        font=dict(color="white"),
-        hovermode="x unified",
-        xaxis=dict(
-            title="Day",
-            dtick=1,
-            range=[1, 31]
-        ),
-        yaxis_title="°C"
-    )
-
-    st.plotly_chart(
-        fig2,
-        use_container_width=True
-    )
-
-    # =================================================
-    # AIR FLOW GRAPH
-    # =================================================
-
-    fig3 = go.Figure()
-
-    fig3.add_trace(go.Scatter(
-        x=graph_df["Day"],
-        y=graph_df["Air Flow Rate (CFM)"],
-        mode="lines+markers",
-        line=dict(color="#00FF88", width=4),
-        marker=dict(size=8)
-    ))
-
-    fig3.update_layout(
-        title="Air Flow Trend (CFM)",
-        paper_bgcolor="#0f172a",
-        plot_bgcolor="#0f172a",
-        font=dict(color="white"),
-        hovermode="x unified",
-        xaxis=dict(
-            title="Day",
-            dtick=1,
-            range=[1, 31]
-        ),
-        yaxis_title="CFM"
-    )
-
-    st.plotly_chart(
-        fig3,
-        use_container_width=True
-    )
-
-    # =================================================
-    # COMPRESSED AIR GRAPH
-    # =================================================
-
-    fig4 = go.Figure()
-
-    fig4.add_trace(go.Scatter(
-        x=graph_df["Day"],
-        y=graph_df["Compressed Air Pressure (MPa)"],
-        mode="lines+markers",
-        line=dict(color="#FFD700", width=4),
-        marker=dict(size=8)
-    ))
-
-    fig4.update_layout(
-        title="Compressed Air Pressure Trend (MPa)",
-        paper_bgcolor="#0f172a",
-        plot_bgcolor="#0f172a",
-        font=dict(color="white"),
-        hovermode="x unified",
-        xaxis=dict(
-            title="Day",
-            dtick=1,
-            range=[1, 31]
-        ),
-        yaxis_title="MPa"
-    )
-
-    st.plotly_chart(
-        fig4,
-        use_container_width=True
-    )
-
-    # =================================================
-    # MOTOR AMPERE GRAPH
-    # =================================================
-
-    fig5 = go.Figure()
-
-    fig5.add_trace(go.Scatter(
-        x=graph_df["Day"],
-        y=graph_df["Motor Ampere (A)"],
-        mode="lines+markers",
-        line=dict(color="#FF4444", width=4),
-        marker=dict(size=8)
-    ))
-
-    fig5.update_layout(
-        title="Motor Ampere Trend (A)",
-        paper_bgcolor="#0f172a",
-        plot_bgcolor="#0f172a",
-        font=dict(color="white"),
-        hovermode="x unified",
-        xaxis=dict(
-            title="Day",
-            dtick=1,
-            range=[1, 31]
-        ),
-        yaxis_title="Ampere (A)"
-    )
-
-    st.plotly_chart(
-        fig5,
-        use_container_width=True
-    )
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
 # =====================================================
 # EXPORT FILTERED DATA
@@ -708,7 +612,6 @@ if not filtered_df.empty:
         f"{selected_month}.xlsx"
     )
 
-    # FORCE COLUMN ORDER
     export_df = filtered_df[required_columns]
 
     export_df.to_excel(
