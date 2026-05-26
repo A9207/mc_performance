@@ -76,7 +76,7 @@ st.sidebar.title("⚙️ MACHINE PANEL")
 
 machine = st.sidebar.selectbox(
     "Select Machine",
-    ["Machine 1", "Machine 2", "Machine 3", "Machine 4"]
+    [f"Machine {i}" for i in range(1, 10)]
 )
 
 # =====================================================
