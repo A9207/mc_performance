@@ -609,11 +609,11 @@ if not filtered_df.empty:
         )
          if column == "Temperature (°C)":
             fig.add_hline(
-            y=0,
+            y=10,
             line_color="yellow",
             line_dash="dash",
             line_width=3,
-            annotation_text="Min LIMIT = 0°C",
+            annotation_text="Min LIMIT = 10°C",
             annotation_position="bottom right"
         )
         if column == "Air Flow Rate (CFM)":
