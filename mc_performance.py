@@ -619,11 +619,11 @@ if not filtered_df.empty:
         )
         if column == "Compressed Air Pressure (MPa)":
             fig.add_hline(
-            y=4.0,
+            y=0.4,
             line_color="red",
             line_dash="dash",
             line_width=3,
-            annotation_text="MAX LIMIT = 4.0 MPa",
+            annotation_text="MAX LIMIT = 0.4 MPa",
             annotation_position="top right"
         )
 
