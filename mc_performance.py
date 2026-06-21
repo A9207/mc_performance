@@ -626,6 +626,16 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 0.4 MPa",
             annotation_position="top right"
         )
+        if column == "Motor Ampere (A)":
+            fig.add_hline(
+            y=6,
+            line_color="red",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="MAX LIMIT = 6 A",
+            annotation_position="top right"
+        )
+
 
         fig.update_layout(
             title=f"{column} Trend",
