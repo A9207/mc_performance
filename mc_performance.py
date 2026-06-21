@@ -577,6 +577,18 @@ if not filtered_df.empty:
             mode="lines+markers",
             line=dict(color=color, width=4),
             marker=dict(size=8)
+
+        ))
+
+        if column == "Pressure (KPA)":
+            fig.add_hline(
+            y=2.0,
+            line_color="red",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="MAX LIMIT = 2.0 KPA",
+            annotation_position="top right"
+        )    
         ))
 
         fig.update_layout(
