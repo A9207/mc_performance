@@ -617,6 +617,15 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 3500 CFM",
             annotation_position="top right"
         )
+        if column == "Compressed Air Pressure (MPa)":
+            fig.add_hline(
+            y=4.0,
+            line_color="red",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="MAX LIMIT = 4.0 MPa",
+            annotation_position="top right"
+        )
 
         fig.update_layout(
             title=f"{column} Trend",
