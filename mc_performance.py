@@ -589,6 +589,15 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 2.0 KPA",
             annotation_position="top right"
         )  
+        if column == "Pressure (KPA)":
+            fig.add_hline(
+            y=0.05,
+            line_color="yellow",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="Min LIMIT = 0.05 KPA",
+            annotation_position="bottom right"
+        )  
         if column == "Temperature (°C)":
             fig.add_hline(
             y=60,
