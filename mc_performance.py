@@ -607,6 +607,15 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 60°C",
             annotation_position="top right"
         )
+         if column == "Temperature (°C)":
+            fig.add_hline(
+            y=0,
+            line_color="yellow",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="Min LIMIT = 0°C",
+            annotation_position="bottom right"
+        )
         if column == "Air Flow Rate (CFM)":
             fig.add_hline(
             y=3500,
@@ -616,6 +625,16 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 3500 CFM",
             annotation_position="top right"
         )
+         if column == "Air Flow Rate (CFM)":
+            fig.add_hline(
+            y=500,
+            line_color="red",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="Min LIMIT = 500 CFM",
+            annotation_position="bottom right"
+        )
+
 
         fig.update_layout(
             title=f"{column} Trend",
