@@ -644,6 +644,16 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 6 A",
             annotation_position="top right"
         )
+        if column == "Motor Ampere (A)":
+            fig.add_hline(
+            y=3,
+            line_color="yellow",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="MIN LIMIT = 3 A",
+            annotation_position="bottom right"
+        )
+
 
 
         fig.update_layout(
