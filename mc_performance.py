@@ -607,16 +607,6 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 60 °C",
             annotation_position="top right"
         )
-         if column == "Temperature (°C)":
-            fig.add_hline(
-            y=20,
-            line_color="yellow",
-            line_dash="dash",
-            line_width=3,
-            annotation_text="MIN LIMIT = 20 °C",
-            annotation_position="bottom right"
-        ) 
-        
         if column == "Air Flow Rate (CFM)":
             fig.add_hline(
             y=3500,
