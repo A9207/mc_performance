@@ -588,7 +588,16 @@ if not filtered_df.empty:
             line_width=3,
             annotation_text="MAX LIMIT = 2.0 KPA",
             annotation_position="top right"
-        )    
+        )  
+        if column == "Temperature (°C)":
+            fig.add_hline(
+            y=60,
+            line_color="red",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="MAX LIMIT = 60°C",
+            annotation_position="top right"
+        )
 
         fig.update_layout(
             title=f"{column} Trend",
