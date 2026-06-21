@@ -595,7 +595,7 @@ if not filtered_df.empty:
             line_color="yellow",
             line_dash="dash",
             line_width=3,
-            annotation_text="Min LIMIT = 0.05 KPA",
+            annotation_text="MIN LIMIT = 0.05 KPA",
             annotation_position="bottom right"
         ) 
         if column == "Temperature (°C)":
