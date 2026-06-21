@@ -617,6 +617,15 @@ if not filtered_df.empty:
             annotation_text="MAX LIMIT = 3500 CFM",
             annotation_position="top right"
         )
+        if column == "Air Flow Rate (CFM)":
+            fig.add_hline(
+            y=1000,
+            line_color="yellow",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="MIN LIMIT = 1000 CFM",
+            annotation_position="bottom right"
+        )
         if column == "Compressed Air Pressure (MPa)":
             fig.add_hline(
             y=0.4,
