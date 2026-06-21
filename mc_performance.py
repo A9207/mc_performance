@@ -597,7 +597,16 @@ if not filtered_df.empty:
             line_width=3,
             annotation_text="Min LIMIT = 0.05 KPA",
             annotation_position="bottom right"
-        )  
+        ) 
+        if column == "Temperature (°C)":
+            fig.add_hline(
+            y=60,
+            line_color="red",
+            line_dash="dash",
+            line_width=3,
+            annotation_text="MAX LIMIT = 60 °C",
+            annotation_position="top right"
+        ) 
         
         if column == "Air Flow Rate (CFM)":
             fig.add_hline(
