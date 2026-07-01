@@ -200,6 +200,7 @@ else:
         "Motor Ampere (A)": 0.0,
         "Chimney Condition": "",
         "Discharge Hopper Condition": "",
+        "Any Abnormality": "",
         "Operator Signature": "",
         "Supervisor Signature": ""
     }
