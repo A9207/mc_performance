@@ -100,6 +100,7 @@ required_columns = [
     "Chimney Condition",
     "Discharge Hopper Condition",
     "Motor Ampere (A)",
+    "Any Abnormality",
     "Operator Signature",
     "Supervisor Signature"
 ]
