@@ -340,6 +340,11 @@ with st.form("form"):
         value=str(existing_data["Discharge Hopper Condition"])
     )
 
+    abnormality = st.text_area(
+    "Any Abnormality",
+    value=str(existing_data["Any Abnormality"]),
+    placeholder="Describe any abnormal condition observed..."
+    )
     operator_signature = st.text_input(
         "Operator Signature",
         value=str(existing_data["Operator Signature"])
