@@ -381,6 +381,7 @@ if submit:
         "Chimney Condition": [chimney],
         "Discharge Hopper Condition": [hopper],
         "Motor Ampere (A)": [motor_ampere],
+        "Any Abnormality": [abnormality],
         "Operator Signature": [operator_signature],
         "Supervisor Signature": [supervisor_signature]
 
