@@ -653,7 +653,7 @@ if not filtered_df.empty:
         )
         if column == "Motor Ampere (A)":
             fig.add_hline(
-            y=6,
+            y=8,
             line_color="red",
             line_dash="dash",
             line_width=3,
