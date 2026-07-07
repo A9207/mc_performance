@@ -657,7 +657,7 @@ if not filtered_df.empty:
             line_color="red",
             line_dash="dash",
             line_width=3,
-            annotation_text="MAX LIMIT = 6 A",
+            annotation_text="MAX LIMIT = 8 A",
             annotation_position="top right"
         )
         if column == "Motor Ampere (A)":
