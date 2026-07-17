@@ -172,7 +172,30 @@ st.markdown(f"""
 # LOAD EXISTING DATA FOR SELECTED DATE
 # =====================================================
 
+PASSWORD = "123456"   # Change this to your own password
+
+if "authorized" not in st.session_state:
+    st.session_state.authorized = False
+
 st.subheader("📥 DAILY DATA ENTRY")
+
+if not st.session_state.authorized:
+
+    password = st.text_input(
+        "Enter Password",
+        type="password"
+    )
+
+    if st.button("Unlock Data Entry"):
+
+        if password == PASSWORD:
+            st.session_state.authorized = True
+            st.rerun()
+
+        else:
+            st.error("Incorrect password.")
+
+    st.info("Graphs and reports can be viewed without a password.")
 
 existing_data = {}
 
