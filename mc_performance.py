@@ -186,7 +186,8 @@ st.markdown(f"""
 st.subheader("📥 DAILY DATA ENTRY")
 
 if authorized:   
-existing_data = {}
+    
+    existing_data = {}
 
 temp_date = st.date_input(
     "Select Date To Edit/View",
