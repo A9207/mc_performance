@@ -4,6 +4,17 @@
 # =====================================================
 
 import streamlit as st
+
+ENTRY_PASSWORD = "123456"
+
+st.subheader("🔒 Daily Data Entry")
+
+password = st.text_input(
+    "Enter password to edit data",
+    type="password"
+)
+
+authorized = password == ENTRY_PASSWORD
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import date
@@ -173,7 +184,8 @@ st.markdown(f"""
 # =====================================================
 
 st.subheader("📥 DAILY DATA ENTRY")
-    
+
+if authorized:   
 existing_data = {}
 
 temp_date = st.date_input(
@@ -358,7 +370,9 @@ with st.form("form"):
     submit = st.form_submit_button(
         "💾 SAVE DATA"
     )
+else:
 
+    st.info("🔒 Data entry is restricted. Enter the password to add or edit records.")
 # =====================================================
 # SAVE DATA
 # =====================================================
