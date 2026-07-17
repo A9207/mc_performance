@@ -371,9 +371,10 @@ with st.form("form"):
     submit = st.form_submit_button(
         "💾 SAVE DATA"
     )
-else:
+    
+    else:
 
-    st.info("🔒 Data entry is restricted. Enter the password to add or edit records.")
+        st.info("🔒 Data entry is restricted. Enter the password to add or edit records.")
 # =====================================================
 # SAVE DATA
 # =====================================================
