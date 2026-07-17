@@ -197,7 +197,6 @@ if not st.session_state.authorized:
 
     st.info("Graphs and reports can be viewed without a password.")
 
-if st.session_state.authorized:
     
 existing_data = {}
 
@@ -233,7 +232,7 @@ else:
 # =====================================================
 # INPUT FORM
 # =====================================================
-
+if st.session_state.authorized:
 with st.form("form"):
 
     col1, col2 = st.columns(2)
