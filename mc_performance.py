@@ -197,6 +197,8 @@ if not st.session_state.authorized:
 
     st.info("Graphs and reports can be viewed without a password.")
 
+if st.session_state.authorized:
+    
 existing_data = {}
 
 temp_date = st.date_input(
