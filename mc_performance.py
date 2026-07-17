@@ -374,7 +374,7 @@ with st.form("form"):
     
     else:
 
-        st.info("🔒 Data entry is restricted. Enter the password to add or edit records.")
+    st.info("🔒 Data entry is restricted. Enter the password to add or edit records.")
 # =====================================================
 # SAVE DATA
 # =====================================================
