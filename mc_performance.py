@@ -8,7 +8,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from datetime import date
 import os
-
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
 # =====================================================
 # PAGE CONFIG
 # =====================================================
