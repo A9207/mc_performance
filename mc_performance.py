@@ -202,190 +202,190 @@ st.markdown(f"""
 if st.session_state.authenticated:
     st.subheader("📥 DAILY DATA ENTRY")
 
-existing_data = {}
+    existing_data = {}
 
-temp_date = st.date_input(
-    "Select Date To Edit/View",
-    value=date.today(),
-    key="top_date_selector"
-)
+    temp_date = st.date_input(
+        "Select Date To Edit/View",
+        value=date.today(),
+        key="top_date_selector"
+    )
 
-existing_row = df[
-    df["Date"].dt.date == temp_date
-]
+    existing_row = df[
+        df["Date"].dt.date == temp_date
+    ]
 
-if not existing_row.empty:
+    if not existing_row.empty:
 
-    existing_data = existing_row.iloc[0].to_dict()
+        existing_data = existing_row.iloc[0].to_dict()
 
-else:
+    else:
 
-    existing_data = {
-        "Pressure (KPA)": 0.0,
-        "Temperature (°C)": 0.0,
-        "Air Flow Rate (CFM)": 0.0,
-        "Compressed Air Pressure (MPa)": 0.0,
-        "Motor Ampere (A)": 0.0,
-        "Chimney Condition": "",
-        "Discharge Hopper Condition": "",
-        "Any Abnormality": "",
-        "Operator Signature": "",
-        "Supervisor Signature": ""
-    }
+        existing_data = {
+            "Pressure (KPA)": 0.0,
+            "Temperature (°C)": 0.0,
+            "Air Flow Rate (CFM)": 0.0,
+            "Compressed Air Pressure (MPa)": 0.0,
+            "Motor Ampere (A)": 0.0,
+            "Chimney Condition": "",
+            "Discharge Hopper Condition": "",
+            "Any Abnormality": "",
+            "Operator Signature": "",
+            "Supervisor Signature": ""
+        }
 
 # =====================================================
 # INPUT FORM
 # =====================================================
 
-with st.form("form"):
+    with st.form("form"):
 
-    col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2)
 
     # =================================================
     # LEFT COLUMN
     # =================================================
 
-    with col1:
+        with col1:
 
-        input_date = st.date_input(
-            "Date",
-            value=temp_date
-        )
+            input_date = st.date_input(
+                "Date",
+                value=temp_date
+            )
 
-        pressure = st.number_input(
-            "Pressure (KPA)",
-            min_value=0.0,
-            value=float(existing_data["Pressure (KPA)"]),
-            step=0.1,
-            format="%.2f"
-        )
+            pressure = st.number_input(
+                "Pressure (KPA)",
+                min_value=0.0,
+                value=float(existing_data["Pressure (KPA)"]),
+                step=0.1,
+                format="%.2f"
+            )
 
     # =================================================
     # RIGHT COLUMN
     # =================================================
 
-    with col2:
+        with col2:
 
-        temperature = st.number_input(
-            "Temperature (°C)",
-            min_value=0.0,
-            value=float(existing_data["Temperature (°C)"]),
-            step=0.1,
-            format="%.2f"
-        )
-
-        compressed_air = st.number_input(
-            "Compressed Air Pressure (MPa)",
-            min_value=0.0,
-            value=float(existing_data["Compressed Air Pressure (MPa)"]),
-            step=0.01,
-            format="%.2f"
-        )
-
-        motor_ampere = st.number_input(
-            "Motor Ampere (A)",
-            min_value=0.0,
-            value=float(existing_data["Motor Ampere (A)"]),
-            step=0.1,
-            format="%.2f"
-        )
-
-        st.markdown("### 🌪️ Air Flow Calculator")
-
-        c1, c2, c3, c4, c5 = st.columns(5)
-
-        with c1:
-            v1 = st.number_input(
-                "V1",
+            temperature = st.number_input(
+                "Temperature (°C)",
                 min_value=0.0,
+                value=float(existing_data["Temperature (°C)"]),
                 step=0.1,
                 format="%.2f"
             )
 
-        with c2:
-            v2 = st.number_input(
-                "V2",
+            compressed_air = st.number_input(
+                "Compressed Air Pressure (MPa)",
                 min_value=0.0,
+                value=float(existing_data["Compressed Air Pressure (MPa)"]),
+                step=0.01,
+                format="%.2f"
+            )
+
+            motor_ampere = st.number_input(
+                "Motor Ampere (A)",
+                min_value=0.0,
+                value=float(existing_data["Motor Ampere (A)"]),
                 step=0.1,
                 format="%.2f"
             )
 
-        with c3:
-            v3 = st.number_input(
-                "V3",
-                min_value=0.0,
-                step=0.1,
-                format="%.2f"
-            )
+            st.markdown("### 🌪️ Air Flow Calculator")
 
-        with c4:
-            v4 = st.number_input(
-                "V4",
-                min_value=0.0,
-                step=0.1,
-                format="%.2f"
-            )
+            c1, c2, c3, c4, c5 = st.columns(5)
 
-        with c5:
-            v5 = st.number_input(
-                "V5",
-                min_value=0.0,
-                step=0.1,
-                format="%.2f"
-            )
+            with c1:
+                v1 = st.number_input(
+                    "V1",
+                    min_value=0.0,
+                    step=0.1,
+                    format="%.2f"
+                )
+
+            with c2:
+                v2 = st.number_input(
+                    "V2",
+                    min_value=0.0,
+                    step=0.1,
+                    format="%.2f"
+                )
+
+            with c3:
+                v3 = st.number_input(
+                    "V3",
+                    min_value=0.0,
+                    step=0.1,
+                    format="%.2f"
+                )
+
+            with c4:
+                v4 = st.number_input(
+                    "V4",
+                    min_value=0.0,
+                    step=0.1,
+                    format="%.2f"
+                )
+
+            with c5:
+                v5 = st.number_input(
+                    "V5",
+                    min_value=0.0,
+                    step=0.1,
+                    format="%.2f"
+                )
 
         # =================================================
         # AIR FLOW CALCULATION
         # =================================================
 
-        V = (v1 + v2 + v3 + v4 + v5) / 5
+            V = (v1 + v2 + v3 + v4 + v5) / 5
 
-        circumference = 0.81
+            circumference = 0.81
 
-        D = circumference / 3.142
+            D = circumference / 3.142
 
-        A = (3.142 * D * D) / 4
+            A = (3.142 * D * D) / 4
 
-        Q = (A * V * 3600) * 0.5886
+            Q = (A * V * 3600) * 0.5886
 
-        airflow = Q
+            airflow = Q
 
-        st.success(
-            f"Calculated Air Flow Rate (CFM): {airflow:.2f}"
-        )
+            st.success(
+                f"Calculated Air Flow Rate (CFM): {airflow:.2f}"
+            )
 
     # =================================================
     # EXTRA INPUTS
     # =================================================
 
-    chimney = st.text_input(
-        "Chimney Condition (OK / NOT OK)",
-        value=str(existing_data["Chimney Condition"])
-    )
+        chimney = st.text_input(
+            "Chimney Condition (OK / NOT OK)",
+            value=str(existing_data["Chimney Condition"])
+        )
 
-    hopper = st.text_input(
-        "Discharge Hopper Condition (OK / NOT OK)",
-        value=str(existing_data["Discharge Hopper Condition"])
-    )
+        hopper = st.text_input(
+            "Discharge Hopper Condition (OK / NOT OK)",
+            value=str(existing_data["Discharge Hopper Condition"])
+        )
 
-    abnormality = st.text_input(
-    "Any Abnormality",
-    value=str(existing_data["Any Abnormality"]),
-    placeholder="Describe any abnormal condition observed..."
-    )
-    operator_signature = st.text_input(
-        "Operator Signature",
-        value=str(existing_data["Operator Signature"])
-    )
+        abnormality = st.text_input(
+        "Any Abnormality",
+        value=str(existing_data["Any Abnormality"]),
+        placeholder="Describe any abnormal condition observed..."
+        )
+        operator_signature = st.text_input(
+            "Operator Signature",
+            value=str(existing_data["Operator Signature"])
+        )
 
-    supervisor_signature = st.text_input(
-        "Supervisor Signature",
-        value=str(existing_data["Supervisor Signature"])
-    )
+        supervisor_signature = st.text_input(
+            "Supervisor Signature",
+            value=str(existing_data["Supervisor Signature"])
+        )
 
-    submit = st.form_submit_button(
+        submit = st.form_submit_button(
         "💾 SAVE DATA"
-    )
+        )
 else:
 
     st.info("""
