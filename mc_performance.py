@@ -386,7 +386,22 @@ with st.form("form"):
     submit = st.form_submit_button(
         "💾 SAVE DATA"
     )
-    
+else:
+
+    st.info("""
+🔒 **Data Entry Restricted**
+
+Only the Person in Charge (PIC) can add or edit machine data.
+
+Everyone can still:
+- ✅ View KPI Dashboard
+- ✅ View Machine Summary
+- ✅ View Recorded Data
+- ✅ View Performance Analytics
+- ✅ Export Monthly Report
+""")
+
+    submit = False    
 
 # =====================================================
 # SAVE DATA
