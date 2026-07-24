@@ -200,7 +200,7 @@ st.markdown(f"""
 # LOAD EXISTING DATA FOR SELECTED DATE
 # =====================================================
 if st.session_state.authenticated:
-st.subheader("📥 DAILY DATA ENTRY")
+    st.subheader("📥 DAILY DATA ENTRY")
 
 existing_data = {}
 
