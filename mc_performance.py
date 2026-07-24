@@ -613,7 +613,7 @@ if not filtered_df.empty:
             line_color="red",
             line_dash="dash",
             line_width=3,
-            annotation_text="MAX LIMIT = 65 °C",
+            annotation_text="MAX LIMIT = 60 °C",
             annotation_position="top right"
         )
         if column == "Air Flow Rate (CFM)":
