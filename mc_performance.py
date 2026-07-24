@@ -10,6 +10,33 @@ from datetime import date
 import os
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("🔒 Data Entry Login")
+
+if not st.session_state.authenticated:
+
+    password = st.sidebar.text_input(
+        "Password",
+        type="password"
+    )
+
+    if st.sidebar.button("Login"):
+
+        if password == "PIC123":
+            st.session_state.authenticated = True
+            st.sidebar.success("Login Successful")
+
+        else:
+            st.sidebar.error("Wrong Password")
+
+else:
+
+    st.sidebar.success("Logged in as PIC")
+
+    if st.sidebar.button("Logout"):
+        st.session_state.authenticated = False
+        st.rerun()
 # =====================================================
 # PAGE CONFIG
 # =====================================================
