@@ -393,12 +393,6 @@ else:
 
 Only the Person in Charge (PIC) can add or edit machine data.
 
-Everyone can still:
-- ✅ View KPI Dashboard
-- ✅ View Machine Summary
-- ✅ View Recorded Data
-- ✅ View Performance Analytics
-- ✅ Export Monthly Report
 """)
 
     submit = False    
