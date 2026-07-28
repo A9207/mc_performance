@@ -114,6 +114,11 @@ machine = st.sidebar.selectbox(
 os.makedirs("data", exist_ok=True)
 
 DATA_FILE = f"data/{machine.replace(' ','_')}.xlsx"
+st.write("Loading file:")
+st.write(DATA_FILE)
+
+st.write("File exists:")
+st.write(os.path.exists(DATA_FILE))
 
 # =====================================================
 # REQUIRED COLUMNS
