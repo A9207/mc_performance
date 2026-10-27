@@ -597,9 +597,13 @@ else:
 
 if not filtered_df.empty:
 
-    graph_df = filtered_df.sort_values(
-        "Date"
-    ).copy()
+    graph_df = filtered_df[
+        filtered_df["Supervisor Signature"]
+        .astype(str)
+        .str.strip()
+        .str.upper()
+        .ne("NP")
+    ].sort_values("Date").copy()
 
     graph_df["Day"] = graph_df["Date"].dt.day
 
